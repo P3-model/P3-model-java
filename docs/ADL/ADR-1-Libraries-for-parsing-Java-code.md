@@ -8,7 +8,7 @@ we need to decide which code parsing libraries to use, initially.
 ## Status
 
 1. Proposed: **2023-09-25**
-2. Accepted/Declined: **2023-10-02**
+2. Accepted: **2023-10-02**
 
 ## Context
 
