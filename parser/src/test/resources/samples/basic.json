@@ -1,3 +1,43 @@
 {
-  "test": "value"
+  "System": "basic",
+  "Elements": [
+    {
+      "Type": "DddRepository",
+      "Id": "basic.KozaRepo",
+      "Name": "KozaRepo"
+    },
+    {
+      "Type": "ProcessStep",
+      "Id": "basic.",
+      "Name": "DoSomething"
+    },
+    {
+      "Type": "ProcessStepContract",
+      "Id": "basic.DoSomething",
+      "Name": "DoSomething",
+      "AdditionalAttributes" : {
+        "type": "command"
+      }
+    },
+    {
+      "Type": "DDDValueObject",
+      "Id": "basic.SomeValue",
+      "Name": "SomeValue",
+      "AdditionalAttributes" : {
+        "type": "domainSpecific"
+      }
+    },
+    {
+      "Type": "DddApplicationService",
+      "Id": "basic.SomeService",
+      "Name": "SomeService"
+    },
+    {
+      "Type": "DddAggregate",
+      "Id": "basic.Sample",
+      "Name": "Sample"
+    }
+  ],
+  "Relations": [],
+  "Traits": []
 }

@@ -10,13 +10,13 @@ import org.junit.jupiter.api.Test;
 class P3ParserTest {
 
   @GivenTextResource("samples/basic.json")
-  String basicModel;
+  String expectedBasicModel;
 
   @Test
   void should_generate_model_for_basic() {
 
     String generatedP3Model = new P3Parser().parse("sourcePath");
 
-    assertThat(generatedP3Model).isEqualToIgnoringWhitespace(basicModel);
+    assertThat(generatedP3Model).isEqualToIgnoringWhitespace(expectedBasicModel);
   }
 }
