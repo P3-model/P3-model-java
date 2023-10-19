@@ -3,16 +3,11 @@
   "Elements": [
     {
       "Type": "DddRepository",
-      "Id": "basic.KozaRepo",
-      "Name": "KozaRepo"
+      "Id": "basic.SampleRepo",
+      "Name": "SampleRepo"
     },
     {
       "Type": "ProcessStep",
-      "Id": "basic.",
-      "Name": "DoSomething"
-    },
-    {
-      "Type": "ProcessStepContract",
       "Id": "basic.DoSomething",
       "Name": "DoSomething",
       "AdditionalAttributes" : {
