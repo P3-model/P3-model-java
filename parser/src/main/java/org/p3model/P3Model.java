@@ -1,5 +1,7 @@
 package org.p3model;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +23,26 @@ public class P3Model {
     elements.add(new P3Element(id, p3ElementType, name));
   }
 
+  public void addElements(List<P3Element> elements) {
+    this.elements.addAll(elements);
+  }
+
+  public void addRelations(List<P3Relation> relations) {
+    this.relations.addAll(relations);
+  }
+
+  public void addTraits(List<P3Trait> traits) {
+    this.traits.addAll(traits);
+  }
+
+  public String getSystemName() {
+    return system;
+  }
+
+  public List<P3Element> getElements() {
+    return elements;
+  }
+
   public static class P3Trait {
     String name;
   }
@@ -30,7 +52,12 @@ public class P3Model {
   }
 
   public enum P3ElementType {
-    DddRepository
+    DddRepository,
+    DddAggregate,
+    DddEntity,
+    DddValueObject,
+    DddApplicationService,
+    ProcessStep
   }
 
   public static class P3Element {
@@ -43,6 +70,33 @@ public class P3Model {
       this.id = id;
       this.type = type;
       this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      P3Element p3Element = (P3Element) o;
+      return Objects.equal(id, p3Element.id) && type == p3Element.type
+          && Objects.equal(name, p3Element.name);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hashCode(id, type, name);
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("id", id)
+          .add("type", type)
+          .add("name", name)
+          .toString();
     }
   }
 }

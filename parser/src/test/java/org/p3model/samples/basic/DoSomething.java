@@ -3,7 +3,7 @@ package org.p3model.samples.basic;
 import java.util.UUID;
 import org.p3model.annotations.domain.dynamicModel.ProcessStepContract;
 
-@ProcessStepContract
+
 public class DoSomething {
 
   public UUID getId() {

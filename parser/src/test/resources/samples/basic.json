@@ -24,8 +24,8 @@
     },
     {
       "Type": "DddApplicationService",
-      "Id": "basic.SomeService",
-      "Name": "SomeService"
+      "Id": "basic.SampleService",
+      "Name": "SampleService"
     },
     {
       "Type": "DddAggregate",

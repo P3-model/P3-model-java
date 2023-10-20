@@ -7,7 +7,7 @@ import com.adelean.inject.resources.junit.jupiter.TestWithResources;
 import org.junit.jupiter.api.Test;
 import org.p3model.P3Model.P3ElementType;
 @TestWithResources
-class P3JsonSerializerTest {
+class P3GsonSerializerTest {
 
   @GivenTextResource("serializer/single_element_model.json")
   String singleElementModel;
@@ -15,7 +15,7 @@ class P3JsonSerializerTest {
   @Test
   void should_serialize_single_element_model() {
 
-    P3JsonSerializer serializer = new P3JsonSerializer();
+    P3GsonSerializer serializer = new P3GsonSerializer();
     P3Model model = new P3Model("basic");
     model.addElement(P3ElementType.DddRepository, "SampleRepo", "basic.SampleRepo");
 

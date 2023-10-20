@@ -1,12 +1,12 @@
 {
-  "system": "basic",
-  "elements": [
+  "System": "basic",
+  "Elements": [
     {
-      "id": "basic.SampleRepo",
-      "type": "DddRepository",
-      "name": "SampleRepo"
+      "Id": "basic.SampleRepo",
+      "Type": "DddRepository",
+      "Name": "SampleRepo"
     }
   ],
-  "relations": [],
-  "traits": []
+  "Relations": [],
+  "Traits": []
 }
