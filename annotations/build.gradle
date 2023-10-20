@@ -4,7 +4,9 @@ plugins {
     id 'maven-publish'
 }
 
-sourceCompatibility = JavaVersion.VERSION_11
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+}
 
 group 'org.p3model'
 version '0.1-SNAPSHOT'
