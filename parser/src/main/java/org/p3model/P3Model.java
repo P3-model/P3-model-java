@@ -1,9 +1,9 @@
 package org.p3model;
 
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.StringJoiner;
 
 public class P3Model {
 
@@ -81,21 +81,21 @@ public class P3Model {
         return false;
       }
       P3Element p3Element = (P3Element) o;
-      return Objects.equal(id, p3Element.id) && type == p3Element.type
-          && Objects.equal(name, p3Element.name);
+      return Objects.equals(id, p3Element.id) && type == p3Element.type
+          && Objects.equals(name, p3Element.name);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hashCode(id, type, name);
+      return Objects.hash(id, type, name);
     }
 
     @Override
     public String toString() {
-      return MoreObjects.toStringHelper(this)
-          .add("id", id)
-          .add("type", type)
-          .add("name", name)
+      return new StringJoiner(", ", P3Element.class.getSimpleName() + "[", "]")
+          .add("id='" + id + "'")
+          .add("type=" + type)
+          .add("name='" + name + "'")
           .toString();
     }
   }
