@@ -73,7 +73,7 @@ public class P3ClassgraphExtractor implements P3ModelExtractor {
 
     ScanResultWrapper wrapper = new ScanResultWrapper(scanResult);
     return wrapper.getElementClasses()
-        .stream().map(classInfo -> new P3Element("basic." + classInfo.getSimpleName(),
+        .stream().map(classInfo -> new P3Element("basic",
             getP3ElementType(classInfo),
             classInfo.getSimpleName())).collect(Collectors.toList());
 

@@ -108,8 +108,8 @@ public class P3Model {
 
     private final String name;
 
-    public P3Element(String id, P3ElementType type, String name) {
-      this.id = id;
+    public P3Element(String path, P3ElementType type, String name) {
+      this.id = path + "." + name;
       this.type = type;
       this.name = name;
     }
