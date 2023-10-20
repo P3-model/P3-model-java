@@ -1,9 +1,12 @@
 plugins {
     id 'java'
     id 'java-library'
+    id 'maven-publish'
 }
 
-sourceCompatibility = JavaVersion.VERSION_11
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+}
 
 group 'org.p3model'
 version '0.1-SNAPSHOT'
@@ -15,6 +18,14 @@ repositories {
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+publishing {
+    publications {
+        myLibrary(MavenPublication) {
+            from components.java
+        }
+    }
 }
 
 test {

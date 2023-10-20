@@ -1,0 +1,38 @@
+{
+  "System": "basic",
+  "Elements": [
+    {
+      "Type": "DddRepository",
+      "Id": "basic.SampleRepo",
+      "Name": "SampleRepo"
+    },
+    {
+      "Type": "ProcessStep",
+      "Id": "basic.DoSomething",
+      "Name": "DoSomething",
+      "AdditionalAttributes" : {
+        "type": "command"
+      }
+    },
+    {
+      "Type": "DDDValueObject",
+      "Id": "basic.SomeValue",
+      "Name": "SomeValue",
+      "AdditionalAttributes" : {
+        "type": "domainSpecific"
+      }
+    },
+    {
+      "Type": "DddApplicationService",
+      "Id": "basic.SampleService",
+      "Name": "SampleService"
+    },
+    {
+      "Type": "DddAggregate",
+      "Id": "basic.Sample",
+      "Name": "Sample"
+    }
+  ],
+  "Relations": [],
+  "Traits": []
+}

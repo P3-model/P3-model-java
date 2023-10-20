@@ -1,0 +1,12 @@
+{
+  "System": "basic",
+  "Elements": [
+    {
+      "Id": "basic.SampleRepo",
+      "Type": "DddRepository",
+      "Name": "SampleRepo"
+    }
+  ],
+  "Relations": [],
+  "Traits": []
+}
