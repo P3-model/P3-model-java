@@ -2,6 +2,7 @@ package org.p3model;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
+import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.stream.Collectors;
 import org.p3model.P3Model.P3Element;
 import org.p3model.P3Model.P3ElementType;
 import org.p3model.P3Model.P3Relation;
+import org.p3model.P3Model.P3RelationType;
 import org.p3model.P3Model.P3Trait;
 import org.p3model.annotations.ModelElement;
 import org.p3model.annotations.SystemDefinition;
@@ -43,21 +45,37 @@ public class P3ClassgraphExtractor implements P3ModelExtractor {
   }
 
   private List<P3Relation> extractRelations(ScanResult scanResult) {
-    return new ArrayList<>();
+
+    ScanResultWrapper wrapper = new ScanResultWrapper(scanResult);
+
+    ClassInfoList elementClasses = wrapper.getElementClasses();
+    List<P3Relation> relations = new ArrayList<>();
+
+    for (final ClassInfo ci : elementClasses) {
+      for (final ClassInfo dep : ci.getClassDependencies()) {
+        if (elementClasses.contains(dep)) {
+          relations.add(new P3Relation(P3RelationType.DependsOn, "basic."+ ci.getSimpleName(), "basic." + dep.getSimpleName()));
+        }
+      }
+    }
+
+    return relations;
+
   }
 
   private List<P3Element> extractElements(ScanResult scanResult) {
-
-    return scanResult.getClassesWithAnnotation(ModelElement.class)
-        .filter(classInfo -> !classInfo.isAnnotation())
-        .stream().map(classInfo -> new P3Element("basic." + classInfo.getSimpleName(), getP3ElementType(classInfo),
+    ScanResultWrapper wrapper = new ScanResultWrapper(scanResult);
+    return wrapper.getElementClasses()
+        .stream().map(classInfo -> new P3Element("basic." + classInfo.getSimpleName(),
+            getP3ElementType(classInfo),
             classInfo.getSimpleName())).collect(Collectors.toList());
 
 
   }
 
   private static P3ElementType getP3ElementType(ClassInfo classInfo) {
-    return P3ElementType.valueOf(classInfo.getAnnotationInfo().directOnly().get(0).getClassInfo().getSimpleName());
+    return P3ElementType.valueOf(
+        classInfo.getAnnotationInfo().directOnly().get(0).getClassInfo().getSimpleName());
   }
 
   private String extractSystemName(ScanResult scanResult) {
@@ -73,11 +91,30 @@ public class P3ClassgraphExtractor implements P3ModelExtractor {
     try (ScanResult scanResult =
         new ClassGraph()
             .enableAllInfo()
-//            .disableJarScanning()
+            .enableInterClassDependencies()
             .acceptPackages(packageName)
             .scan()) {
 
       return extract.apply(scanResult);
+    }
+  }
+
+  private class ScanResultWrapper {
+
+    private final ScanResult scanResult;
+
+    ScanResultWrapper(ScanResult scanResult) {
+      this.scanResult = scanResult;
+    }
+
+    ClassInfoList getElementClasses() {
+      return scanResult.getClassesWithAnnotation(ModelElement.class)
+          .filter(classInfo -> !classInfo.isAnnotation());
+
+    }
+
+    ScanResult getScanResult() {
+      return scanResult;
     }
   }
 }

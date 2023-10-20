@@ -7,6 +7,8 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.p3model.P3Model.P3Element;
 import org.p3model.P3Model.P3ElementType;
+import org.p3model.P3Model.P3Relation;
+import org.p3model.P3Model.P3RelationType;
 
 class P3ModelExtractorTest {
 
@@ -36,9 +38,18 @@ class P3ModelExtractorTest {
     assertThat(model.getElements()).containsAll(expectedElements);
   }
 
+  @Test
+  void should_extract_relations_between_types() {
+    P3ModelExtractor extractor = new P3ClassgraphExtractor("org.p3model.samples.basic");
 
+    P3Model model = extractor.extract();
 
+    List<P3Relation> expectedRelations = new ArrayList<>();
+    expectedRelations.add(new P3Relation(P3RelationType.DependsOn, "basic.SampleRepo", "basic.Sample"));
+    expectedRelations.add(new P3Relation(P3RelationType.DependsOn, "basic.Sample", "basic.SomeValue"));
+    expectedRelations.add(new P3Relation(P3RelationType.DependsOn, "basic.SampleService", "basic.SampleRepo"));
+    expectedRelations.add(new P3Relation(P3RelationType.DependsOn, "basic.SampleService", "basic.Sample"));
 
-
-
+    assertThat(model.getRelations()).containsAll(expectedRelations);
+  }
 }

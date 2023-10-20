@@ -43,27 +43,69 @@ public class P3Model {
     return elements;
   }
 
+  public List<P3Relation> getRelations() {
+    return relations;
+  }
+
   public static class P3Trait {
+
     String name;
   }
 
   public static class P3Relation {
-    String name;
+
+    private final P3RelationType type;
+    private final String source;
+    private final String destination;
+
+    public P3Relation(P3RelationType type, String source, String destination) {
+      this.type = type;
+      this.source = source;
+      this.destination = destination;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      P3Relation that = (P3Relation) o;
+      return type == that.type && Objects.equals(source, that.source)
+          && Objects.equals(destination, that.destination);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(type, source, destination);
+    }
+
+    @Override
+    public String toString() {
+      return new StringJoiner(", ", P3Relation.class.getSimpleName() + "[", "]")
+          .add("type=" + type)
+          .add("source='" + source + "'")
+          .add("destination='" + destination + "'")
+          .toString();
+    }
   }
 
   public enum P3ElementType {
-    DddRepository,
-    DddAggregate,
-    DddEntity,
-    DddValueObject,
-    DddApplicationService,
-    ProcessStep
+    DddRepository, DddAggregate, DddEntity, DddValueObject, DddApplicationService, ProcessStep
+
+  }
+
+  public enum P3RelationType {
+    DependsOn, IsImplementedBy
   }
 
   public static class P3Element {
 
     private final String id;
     private final P3ElementType type;
+
     private final String name;
 
     public P3Element(String id, P3ElementType type, String name) {
@@ -98,5 +140,6 @@ public class P3Model {
           .add("name='" + name + "'")
           .toString();
     }
+
   }
 }
