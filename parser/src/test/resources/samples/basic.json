@@ -1,5 +1,8 @@
 {
-  "System": "basic",
+  "System": {
+    "Name": "basic",
+    "GenerationTimestamp": ""
+  },
   "Elements": [
     {
       "Type": "DddRepository",
@@ -10,7 +13,7 @@
       "Type": "ProcessStep",
       "Id": "basic.DoSomething",
       "Name": "DoSomething",
-      "AdditionalAttributes" : {
+      "AdditionalAttributes": {
         "type": "command"
       }
     },
@@ -18,7 +21,7 @@
       "Type": "DDDValueObject",
       "Id": "basic.SomeValue",
       "Name": "SomeValue",
-      "AdditionalAttributes" : {
+      "AdditionalAttributes": {
         "type": "domainSpecific"
       }
     },
@@ -33,6 +36,20 @@
       "Name": "Sample"
     }
   ],
-  "Relations": [],
+  "Relations": [
+    {
+      "Type": "DependsOn",
+      "Source": "basic.SampleRepo",
+      "Destination": "basic.Sample",
+      "AdditionalAttributes": {
+        "description": "is persisted by"
+      }
+    },
+    {
+      "Type": "DependsOn",
+      "Source": "basic.Sample",
+      "Destination": "basic.SomeValue"
+    }
+  ],
   "Traits": []
 }

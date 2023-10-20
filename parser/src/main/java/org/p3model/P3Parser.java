@@ -1,5 +1,7 @@
 package org.p3model;
 
+import org.p3model.annotations.domain.dynamicModel.ProcessStep;
+
 public class P3Parser {
 
   public static P3Parser forPackage(String packageName) {
@@ -13,6 +15,7 @@ public class P3Parser {
     this.serializer = serializer;
   }
 
+  @ProcessStep
   public String parse() {
     P3Model model = extractor.extract();
     return serializer.serialize(model);

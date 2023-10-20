@@ -1,16 +1,23 @@
 package org.p3model.samples.basic;
 
 import java.util.UUID;
-import org.p3model.annotations.domain.dynamicModel.ProcessStepContract;
 
 
 public class DoSomething {
 
+  private final UUID id;
+  private final String someValue;
+
+  public DoSomething(UUID id, String someValue) {
+    this.id = id;
+    this.someValue = someValue;
+  }
+
   public UUID getId() {
-    return null;
+    return id;
   }
 
   public String getSomeValue() {
-    return null;
+    return someValue;
   }
 }

@@ -14,7 +14,7 @@ class P3ParserTest {
   String expectedBasicModel;
 
   @Test
-  @Disabled
+  @Disabled("full parsing is being implemented")
   void should_generate_model_for_basic() {
 
     P3Parser p3Parser = P3Parser.forPackage("org.p3model.samples.basic");

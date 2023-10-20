@@ -14,7 +14,12 @@ public class SampleService {
     Sample sample  = repo.load(command.getId());
     sample.doSomething(command.getSomeValue());
     repo.save(sample);
+  }
+  @ProcessStep
+  String handle(DoSomethingElse command) {
 
+    Sample sample = repo.load(command.getId());
+    return sample.doSomethingElse();
   }
 
 }
