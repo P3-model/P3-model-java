@@ -1,42 +1,30 @@
 {
-  "$id": "1",
+  "System": "multimodule",
   "Elements": [
     {
-      "$type": "DddRepository",
+      "Type": "DddRepository",
       "Id": "multimodule.module1.SampleRepo",
-      "Name": "SampleRepo",
-      "DescriptionFile": null
+      "Name": "SampleRepo"
     },
     {
-      "$type": "DddRepository",
-      "$id": "1",
-      "Name": "SampleRepo",
-      "DescriptionFile": null
+      "Type": "DddRepository",
+      "Id": "multimodule.module2.SampleRepo",
+      "Name": "SampleRepo"
     },
     {
-      "$type": "ProcessStepContract",// ?? bo też serilaizotor w json - dziedziczenie
-      "$id": "3", // wskaźnik na potrzeby relacji, serializator nadaje
-      "Type": "Command",
-      "Name": "DoSomething",
-      "DescriptionFile": null
+      "Type": "DddRepository",
+      "Id": "multimodule.module2.SampleRepo",
+      "Name": "SampleRepo"
     },
     {
-      "$type": "DDDValueObject",
-      "$id": "4",
-      "Name": "SomeValue",
-      "DescriptionFile": null
+      "Type": "DddEntity",
+      "Id": "multimodule.module2.SampleM1",
+      "Name": "SampleM1"
     },
     {
-      "$type": "DddApplicationService",
-      "$id": "5",
-      "Name": "SomeService",
-      "DescriptionFile": null
-    },
-    {
-      "$type": "DddAggregate",
-      "$id": "6",
-      "Name": "Sample",
-      "DescriptionFile": null
+      "Type": "DddEntity",
+      "Id": "multimodule.module2.SampleM2",
+      "Name": "SampleM2"
     }
   ],
   "Relations": [],
