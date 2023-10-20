@@ -64,6 +64,13 @@ public class P3ClassgraphExtractor implements P3ModelExtractor {
   }
 
   private List<P3Element> extractElements(ScanResult scanResult) {
+
+    // 1. find all modules
+    // 2. create dependency graph
+    // 3. assign element to module
+    // 4. find path to element
+
+
     ScanResultWrapper wrapper = new ScanResultWrapper(scanResult);
     return wrapper.getElementClasses()
         .stream().map(classInfo -> new P3Element("basic." + classInfo.getSimpleName(),

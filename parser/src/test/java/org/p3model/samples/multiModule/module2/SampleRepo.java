@@ -1,4 +1,4 @@
-package org.p3model.samples.multimodule.module2;
+package org.p3model.samples.multiModule.module2;
 
 import java.util.UUID;
 import org.p3model.annotations.domain.staticModel.ddd.DddRepository;

@@ -1,8 +1,8 @@
-package org.p3model.samples.multimodule.module1;
+package org.p3model.samples.multiModule.module2;
 
 import org.p3model.annotations.domain.staticModel.ddd.DddEntity;
 
 @DddEntity
-public class SampleM1 {
+public class SampleM2 {
 
 }
