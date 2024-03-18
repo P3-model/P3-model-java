@@ -33,11 +33,11 @@ public class P3ClassgraphAnalyzer implements P3ModelAnalyzer {
   }
 
   @Override
-  public P3Model extract() {
+  public P3Model extract(String systemName) {
 
     return scanner(scanResult -> {
 
-      P3Model model = new P3Model(systemNameExtractor.extractSystemName(scanResult));
+      P3Model model = new P3Model(systemNameExtractor.extractSystemName(systemName, scanResult));
       model.addElements(elementExtractor.extractElements(scanResult));
       model.addRelations(relationExtractor.extractRelations(scanResult));
 
@@ -57,7 +57,7 @@ public class P3ClassgraphAnalyzer implements P3ModelAnalyzer {
     }
   }
 
-   static class ScanResultWrapper {
+  static class ScanResultWrapper {
 
     private final ScanResult scanResult;
 
@@ -71,20 +71,26 @@ public class P3ClassgraphAnalyzer implements P3ModelAnalyzer {
 
     }
 
-     PackageInfoList getPackageInfoAnnotatedWith(Class<?> annotationClass) {
-      return scanResult.getPackageInfo().filter(packageInfo -> packageInfo.hasAnnotation(annotationClass.getName()));
+    PackageInfoList getPackageInfoAnnotatedWith(Class<?> annotationClass) {
+      return scanResult.getPackageInfo()
+          .filter(packageInfo -> packageInfo.hasAnnotation(annotationClass.getName()));
     }
   }
 
   static class SystemNameExtractor {
 
-    String extractSystemName(ScanResultWrapper scanResult) {
-      // for now, we look only in package info, but in future there will be other places and hierarchy of extractors
-      return scanResult.getPackageInfoAnnotatedWith(SystemDefinition.class)
-          .stream()
-          .map(packageInfo -> packageInfo.getAnnotationInfo(SystemDefinition.class).getParameterValues().getValue("name").toString())
-          .findFirst()
-          .orElseThrow(() -> new ExtractingException("no system name found"));
+    String extractSystemName(String externalName, ScanResultWrapper scanResult) {
+
+      if (!externalName.isBlank()) {
+        return externalName;
+      } else {
+        return scanResult.getPackageInfoAnnotatedWith(SystemDefinition.class)
+            .stream()
+            .map(packageInfo -> packageInfo.getAnnotationInfo(SystemDefinition.class)
+                .getParameterValues().getValue("name").toString())
+            .findFirst()
+            .orElseThrow(() -> new ExtractingException("no system name found"));
+      }
     }
   }
 
@@ -105,27 +111,29 @@ public class P3ClassgraphAnalyzer implements P3ModelAnalyzer {
 
     List<P3Element> extractElements(ScanResultWrapper wrapper) {
 
-      PackageInfoList domainModulePackages = wrapper.getPackageInfoAnnotatedWith(DomainModule.class);
+      PackageInfoList domainModulePackages = wrapper.getPackageInfoAnnotatedWith(
+          DomainModule.class);
 
       List<P3Element> foundElements = new ArrayList<>();
 
       for (final PackageInfo pkg : domainModulePackages) {
 
-        foundElements.add(new P3Element("",P3ElementType.DomainModule, pkg.getAnnotationInfo(
+        foundElements.add(new P3Element("", P3ElementType.DomainModule, pkg.getAnnotationInfo(
             DomainModule.class.getName()).getParameterValues().getValue("name").toString()));
       }
 
       ClassInfoList elementClasses = wrapper.getElementClasses();
       for (ClassInfo elementClass : elementClasses) {
         foundElements.add(
-              new P3Element("basic", P3ClassgraphAnalyzer.getP3ElementType(elementClass),
-                  elementClass.getSimpleName()));
+            new P3Element("basic", P3ClassgraphAnalyzer.getP3ElementType(elementClass),
+                elementClass.getSimpleName()));
       }
       return foundElements;
     }
   }
 
   static class RelationExtractor {
+
     List<P3Relation> extractRelations(ScanResultWrapper wrapper) {
 
       ClassInfoList elementClasses = wrapper.getElementClasses();

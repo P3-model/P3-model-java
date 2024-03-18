@@ -18,7 +18,7 @@ class P3ModelAnalyzerTest {
   void should_extract_relations_between_types() {
     P3ModelAnalyzer extractor = new P3ClassgraphAnalyzer("org.p3model.samples.basic");
 
-    P3Model model = extractor.extract();
+    P3Model model = extractor.extract("basic");
 
     List<P3Relation> expectedRelations = new ArrayList<>();
     expectedRelations.add(new P3Relation(P3RelationType.DependsOn, "basic.SampleRepo", "basic.Sample"));
@@ -34,7 +34,7 @@ class P3ModelAnalyzerTest {
   void should_generate_element_id_for_nested_modules() {
     P3ModelAnalyzer extractor = new P3ClassgraphAnalyzer("org.p3model.samples.nestedModule");
 
-    P3Model model = extractor.extract();
+    P3Model model = extractor.extract("nested");
 
     List<P3Element> expectedElements = new ArrayList<>();
     expectedElements.add(new P3Element("nested", P3ElementType.DddEntity,"Element0"));

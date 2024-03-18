@@ -16,8 +16,8 @@ public class P3Parser {
   }
 
   @ProcessStep
-  public String parse() {
-    P3Model model = analyzer.extract();
+  public String parse(String systemName) {
+    P3Model model = analyzer.extract(systemName);
     return serializer.serialize(model);
   }
 }

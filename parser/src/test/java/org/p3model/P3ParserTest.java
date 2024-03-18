@@ -18,7 +18,7 @@ class P3ParserTest {
   void should_generate_model_for_basic() {
 
     P3Parser p3Parser = P3Parser.forPackage("org.p3model.samples.basic");
-    String JSON = p3Parser.parse();
+    String JSON = p3Parser.parse("basic");
 
     assertThat(JSON).isEqualToIgnoringWhitespace(expectedBasicModel);
   }
