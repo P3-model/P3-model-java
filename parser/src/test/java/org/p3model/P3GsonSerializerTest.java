@@ -17,7 +17,7 @@ class P3GsonSerializerTest {
 
     P3GsonSerializer serializer = new P3GsonSerializer();
     P3Model model = new P3Model("basic");
-    model.addElement(P3ElementType.DddRepository, "SampleRepo", "basic.SampleRepo");
+    model.addElement(P3ElementType.DddRepository, "SampleRepo", "");
 
     String JSON = serializer.serialize(model);
 

@@ -2,7 +2,7 @@
   "System": "basic",
   "Elements": [
     {
-      "Id": "basic.SampleRepo",
+      "Id": "DddRepository|SampleRepo",
       "Type": "DddRepository",
       "Name": "SampleRepo"
     }

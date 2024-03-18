@@ -19,8 +19,8 @@ public class P3Model {
     traits = new ArrayList<>();
   }
 
-  public void addElement(P3ElementType p3ElementType, String name, String id) {
-    elements.add(new P3Element(id, p3ElementType, name));
+  public void addElement(P3ElementType p3ElementType, String name, String path) {
+    elements.add(new P3Element(path, p3ElementType, name));
   }
 
   public void addElements(List<P3Element> elements) {
@@ -93,7 +93,7 @@ public class P3Model {
   }
 
   public enum P3ElementType {
-    DddRepository, DddAggregate, DddEntity, DddValueObject, DddApplicationService, ProcessStep
+    DddRepository, DddAggregate, DddEntity, DddValueObject, DddApplicationService, ProcessStep, DomainModule
 
   }
 
@@ -109,7 +109,8 @@ public class P3Model {
     private final String name;
 
     public P3Element(String path, P3ElementType type, String name) {
-      this.id = path + "." + name;
+      if (!path.isBlank()) path = path + ".";
+      this.id = type.name() + "|" + path + name;
       this.type = type;
       this.name = name;
     }

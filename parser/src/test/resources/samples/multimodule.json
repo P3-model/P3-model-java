@@ -7,7 +7,7 @@
       "Name": "SampleRepo"
     },
     {
-      "Type": "DddRepository",
+      "Type": "Domain.BuildingBlock.DddRepository",
       "Id": "multimodule.module2.SampleRepo",
       "Name": "SampleRepo"
     },

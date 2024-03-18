@@ -10,7 +10,7 @@
       "Name": "SampleRepo"
     },
     {
-      "Type": "ProcessStep",
+      "Type": "Domain.ProcessStep.Command",
       "Id": "basic.DoSomething",
       "Name": "DoSomething",
       "AdditionalAttributes": {

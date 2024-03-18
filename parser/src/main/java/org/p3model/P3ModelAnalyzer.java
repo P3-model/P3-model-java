@@ -1,6 +1,6 @@
 package org.p3model;
 
-interface P3ModelExtractor {
+interface P3ModelAnalyzer {
   P3Model extract();
 
   class ExtractingException extends RuntimeException {
