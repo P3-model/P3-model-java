@@ -50,6 +50,5 @@
       "Source": "basic.Sample",
       "Destination": "basic.SomeValue"
     }
-  ],
-  "Traits": []
+  ]
 }

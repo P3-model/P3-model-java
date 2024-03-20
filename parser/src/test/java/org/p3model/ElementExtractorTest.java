@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.p3model.P3ClassgraphAnalyzer.ElementExtractor;
+import org.p3model.P3ClassgraphAnalyzer.ModelBuilder;
 import org.p3model.P3ClassgraphAnalyzer.ScanResultWrapper;
 import org.p3model.P3Model.P3Element;
 import org.p3model.P3Model.P3ElementType;
@@ -25,8 +26,9 @@ class ElementExtractorTest {
 
     ElementExtractor extractor = new ElementExtractor();
 
-    List<P3Element> elements = extractor.extractElements(wrapper);
+    ModelBuilder builder = new ModelBuilder("basic", new HierarchyStructure());
+    extractor.extractElements(wrapper, builder);
 
-    assertThat(elements).containsAll(expectedElements);
+    assertThat(builder.build().getElements()).containsAll(expectedElements);
   }
 }

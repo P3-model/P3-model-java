@@ -24,7 +24,6 @@ public class P3ClassgraphAnalyzer implements P3ModelAnalyzer {
   private final String packageName;
   private final SystemNameExtractor systemNameExtractor = new SystemNameExtractor();
   private final ElementExtractor elementExtractor = new ElementExtractor();
-  private final RelationExtractor relationExtractor = new RelationExtractor();
 
   // maybe for simpler test setup (in case of multiple implementations), package should be removed
   // from constructor and move to method or builder.
@@ -37,23 +36,43 @@ public class P3ClassgraphAnalyzer implements P3ModelAnalyzer {
 
     return scanner(scanResult -> {
 
-      P3Model model = new P3Model(systemNameExtractor.extractSystemName(systemName, scanResult));
-      model.addElements(elementExtractor.extractElements(scanResult));
-      model.addRelations(relationExtractor.extractRelations(scanResult));
+      ModelBuilder builder = new ModelBuilder(systemNameExtractor.extractSystemName(systemName, scanResult),
+          new HierarchyStructure());
 
-      return model;
+      elementExtractor.extractElements(scanResult, builder);
+
+      return builder.build();
     });
   }
 
-  private static P3ElementType getP3ElementType(ClassInfo classInfo) {
-    return P3ElementType.valueOf(
-        classInfo.getAnnotationInfo().directOnly().get(0).getClassInfo().getSimpleName());
-  }
 
   private P3Model scanner(Function<ScanResultWrapper, P3Model> extract) {
     try (ScanResult scanResult = create(packageName).scan()) {
       ScanResultWrapper wrapper = new ScanResultWrapper(scanResult);
       return extract.apply(wrapper);
+    }
+  }
+
+  static class ModelBuilder {
+    private final String systemName;
+    private final List<P3Element> elements = new ArrayList<>();
+    private final HierarchyStructure hierarchyStructure;
+
+    ModelBuilder(String systemName, HierarchyStructure hierarchyStructure) {
+      this.systemName = systemName;
+      this.hierarchyStructure = hierarchyStructure;
+    }
+
+    P3Model build() {
+      return new P3Model(systemName, elements);
+    }
+
+    public void add(P3Element element) {
+      elements.add(element);
+    }
+
+    public void addBB(String name, P3ElementType p3ElementType, String namespace) {
+      elements.add(new P3Element(hierarchyStructure.pathFor(namespace),p3ElementType, name));
     }
   }
 
@@ -109,26 +128,30 @@ public class P3ClassgraphAnalyzer implements P3ModelAnalyzer {
 
   static class ElementExtractor {
 
-    List<P3Element> extractElements(ScanResultWrapper wrapper) {
+    void extractElements(ScanResultWrapper wrapper, ModelBuilder builder) {
+
 
       PackageInfoList domainModulePackages = wrapper.getPackageInfoAnnotatedWith(
           DomainModule.class);
 
-      List<P3Element> foundElements = new ArrayList<>();
 
       for (final PackageInfo pkg : domainModulePackages) {
 
-        foundElements.add(new P3Element("", P3ElementType.DomainModule, pkg.getAnnotationInfo(
+        builder.add(new P3Element("", P3ElementType.DomainModule, pkg.getAnnotationInfo(
             DomainModule.class.getName()).getParameterValues().getValue("name").toString()));
       }
 
       ClassInfoList elementClasses = wrapper.getElementClasses();
       for (ClassInfo elementClass : elementClasses) {
-        foundElements.add(
-            new P3Element("basic", P3ClassgraphAnalyzer.getP3ElementType(elementClass),
-                elementClass.getSimpleName()));
+        elementClass.getPackageName();
+        builder.add(
+            new P3Element("basic", getP3ElementType(elementClass), elementClass.getSimpleName()));
       }
-      return foundElements;
+    }
+
+    private P3ElementType getP3ElementType(ClassInfo classInfo) {
+      return P3ElementType.valueOf(
+          classInfo.getAnnotationInfo().directOnly().get(0).getClassInfo().getSimpleName());
     }
   }
 

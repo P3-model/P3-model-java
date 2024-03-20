@@ -10,29 +10,24 @@ public class P3Model {
   private final String system;
   private final List<P3Element> elements;
   private final List<P3Relation> relations;
-  private final List<P3Trait> traits;
 
-  public P3Model(String system) {
+  public P3Model(String system, List<P3Element> elements) {
     this.system = system;
-    elements = new ArrayList<>();
-    relations = new ArrayList<>();
-    traits = new ArrayList<>();
+    this.elements = elements;
+    this.relations = new ArrayList<>();
   }
 
   public void addElement(P3ElementType p3ElementType, String name, String path) {
     elements.add(new P3Element(path, p3ElementType, name));
   }
 
-  public void addElements(List<P3Element> elements) {
+  public P3Model addElements(List<P3Element> elements) {
     this.elements.addAll(elements);
+    return this;
   }
 
   public void addRelations(List<P3Relation> relations) {
     this.relations.addAll(relations);
-  }
-
-  public void addTraits(List<P3Trait> traits) {
-    this.traits.addAll(traits);
   }
 
   public String getSystemName() {
@@ -105,7 +100,6 @@ public class P3Model {
 
     private final String id;
     private final P3ElementType type;
-
     private final String name;
 
     public P3Element(String path, P3ElementType type, String name) {
