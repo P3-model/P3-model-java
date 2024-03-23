@@ -25,6 +25,10 @@ class HierarchyStructure {
     return treeRoot;
   }
 
+  public HierarchyNode getRoot() {
+    return treeRoot;
+  }
+
   static class HierarchyNode {
 
     private final String name;
