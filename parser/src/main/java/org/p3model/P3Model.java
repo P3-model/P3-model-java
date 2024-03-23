@@ -42,10 +42,6 @@ public class P3Model {
     return relations;
   }
 
-  public static class P3Trait {
-
-    String name;
-  }
 
   public static class P3Relation {
 
@@ -102,8 +98,13 @@ public class P3Model {
     private final P3ElementType type;
     private final String name;
 
-    public P3Element(String path, P3ElementType type, String name) {
-      if (!path.isBlank()) path = path + ".";
+
+    P3Element(String id, P3ElementType type, String name) {
+      this(new HierarchyStructure.HierarchyPath(id), type,name);
+    }
+
+    P3Element(HierarchyStructure.HierarchyPath path, P3ElementType type, String name) {
+
       this.id = type.name() + "|" + path + name;
       this.type = type;
       this.name = name;

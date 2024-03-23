@@ -71,7 +71,7 @@ public class P3ClassgraphAnalyzer implements P3ModelAnalyzer {
       elements.add(element);
     }
 
-    public void addBB(String name, P3ElementType p3ElementType, String namespace) {
+    public void addBB(String name, P3ElementType p3ElementType, HierarchyStructure.HierarchyPath namespace) {
       elements.add(new P3Element(hierarchyStructure.pathFor(namespace),p3ElementType, name));
     }
   }
