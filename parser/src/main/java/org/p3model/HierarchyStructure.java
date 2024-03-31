@@ -3,12 +3,20 @@ package org.p3model;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 class HierarchyStructure {
 
-  private HierarchyNode treeRoot;
+  private static final String SYSTEM = "system";
+  private final HierarchyNode treeRoot;
+
+  public HierarchyStructure() {
+    treeRoot = new HierarchyNode(SYSTEM, SYSTEM);
+  }
 
   HierarchyPath pathFor(HierarchyPath namespace) {
     List<String> pathParts = new ArrayList<>();
@@ -16,69 +24,119 @@ class HierarchyStructure {
     return new HierarchyPath(pathParts);
   }
 
-  HierarchyNode addRoot(String name, String sourceElementName) {
-    this.treeRoot = new HierarchyNode(name, sourceElementName);
-    return treeRoot;
-  }
-  HierarchyNode addRoot(String name) {
-    this.treeRoot = new HierarchyNode(name, name);
+  public HierarchyNode getRoot() {
     return treeRoot;
   }
 
-  public HierarchyNode getRoot() {
-    return treeRoot;
+  @Override
+  public String toString() {
+    return treeRoot.toString(1);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    HierarchyStructure structure = (HierarchyStructure) o;
+    return Objects.equals(treeRoot, structure.treeRoot);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(treeRoot);
   }
 
   static class HierarchyNode {
 
     private final String name;
     private final String sourceElementName;
-    private final List<HierarchyNode> children;
+    private final Set<HierarchyNode> children;
 
     HierarchyNode addChild(String name, String sourceElementName) {
       HierarchyNode node = new HierarchyNode(name, sourceElementName);
       children.add(node);
       return node;
     }
+
     HierarchyNode addChild(String name) {
       HierarchyNode node = new HierarchyNode(name, name);
       children.add(node);
       return node;
     }
 
-
-
     private HierarchyNode(String name, String sourceElementName) {
       this.name = name;
       this.sourceElementName = sourceElementName;
-      this.children = new ArrayList<>();
+      this.children = new HashSet<>();
     }
 
     public void pathFor(List<String> namespace, List<String> pathBuilder) {
 
-      List<String> remaining = new ArrayList<>();
+      if (name.equals(SYSTEM)) {
+        for (HierarchyNode child : children) {
+          child.pathFor(namespace, pathBuilder);
+        }
+      } else {
 
-      for (Iterator<String> i = namespace.iterator(); i.hasNext();) {
-        String value = i.next();
-        if (sourceElementName.equals(value)) {
-          pathBuilder.add(name);
-          i.forEachRemaining(remaining::add);
-          break;
+        List<String> remaining = new ArrayList<>();
+
+        for (Iterator<String> iterator = namespace.iterator(); iterator.hasNext(); ) {
+          String value = iterator.next();
+          if (sourceElementName.equals(value)) {
+            pathBuilder.add(name);
+            iterator.forEachRemaining(remaining::add);
+            break;
+          }
+        }
+
+        for (HierarchyNode child : children) {
+          child.pathFor(remaining, pathBuilder);
         }
       }
+    }
 
+    public String toString(int level) {
+      StringBuilder builder = new StringBuilder()
+          .append("-".repeat(Math.max(0, level)))
+          .append(" ").append(name)
+          .append(" (").append(sourceElementName).append(")");
+      int childLevel = ++level;
       for (HierarchyNode child : children) {
-        child.pathFor(remaining, pathBuilder);
+        builder.append(System.lineSeparator());
+        builder.append(child.toString(childLevel));
       }
+      return builder.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      HierarchyNode that = (HierarchyNode) o;
+      return Objects.equals(name, that.name) && Objects.equals(sourceElementName,
+          that.sourceElementName) && Objects.equals(children, that.children);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(name, sourceElementName, children);
     }
   }
 
   /**
-   * This type is VO used for representing path in package tree or directory
-   * structure or domain hierarchy.
+   * This type is VO used for representing path in package tree or directory structure or domain
+   * hierarchy.
    * <p>
-   * !!! this is an experiment. If no additional methods will be added in future
-   * We should consider removing it.
+   * !!! this is an experiment. If no additional methods will be added in future We should consider
+   * removing it.
    */
   static class HierarchyPath {
 

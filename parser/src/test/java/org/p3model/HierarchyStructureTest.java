@@ -1,21 +1,21 @@
 package org.p3model;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.p3model.DomainHierarchyFactory.MODULE_NAME;
-import static org.p3model.DomainHierarchyFactory.SUBMODULE_NAME;
-import static org.p3model.DomainHierarchyFactory.basicStructure;
-import static org.p3model.HierarchyStructure.*;
+import static org.p3model.DomainHierarchyFactory.twoLevels;
+import static org.p3model.HierarchyStructure.HierarchyPath;
 
 import org.junit.jupiter.api.Test;
 import org.p3model.HierarchyStructure.HierarchyNode;
 
 class HierarchyStructureTest {
 
+  static final String MODULE_NAME = "module_name";
+  static final String SUBMODULE_NAME = "submodule";
 
   @Test
   void should_compute_path_for_namespace() {
     // Given
-    HierarchyStructure domainStructure = basicStructure();
+    HierarchyStructure domainStructure = twoLevels(MODULE_NAME, SUBMODULE_NAME);
 
     // When
     HierarchyPath path = domainStructure.pathFor(HierarchyPath.from("org.p3model." + MODULE_NAME + "." + SUBMODULE_NAME));
@@ -27,9 +27,10 @@ class HierarchyStructureTest {
   @Test
   void should_compute_path_from_namespace_meny_children() {
     // Given
-    HierarchyStructure domainStructure = basicStructure();
-    domainStructure.getRoot().addChild("sub2").addChild("sub2_1");
-    domainStructure.getRoot().addChild("sub3").addChild("sub3_1");
+    HierarchyStructure domainStructure = DomainHierarchyFactory.empty();
+    HierarchyNode child = domainStructure.getRoot().addChild(MODULE_NAME);
+    child.addChild("sub2").addChild("sub2_1");
+    child.addChild("sub3").addChild("sub3_1");
 
     // When
     HierarchyPath path = domainStructure.pathFor(
@@ -43,7 +44,7 @@ class HierarchyStructureTest {
   void should_compute_path_from_namespace_with_gaps() {
 
     // Given
-    HierarchyStructure domainStructure = basicStructure();
+    HierarchyStructure domainStructure = twoLevels(MODULE_NAME, SUBMODULE_NAME);
 
     // When
     HierarchyPath path = domainStructure.pathFor(
@@ -56,9 +57,9 @@ class HierarchyStructureTest {
   @Test
   void should_compute_path_from_namespace_with_names_different_than_module_names() {
     // Given
-    HierarchyStructure domainStructure = new HierarchyStructure();
-    HierarchyNode root = domainStructure.addRoot("domain_name", "tech_name");
-    root.addChild("submodule", "submodule_tech");
+    HierarchyStructure domainStructure = DomainHierarchyFactory.empty();
+    HierarchyNode child = domainStructure.getRoot().addChild("domain_name", "tech_name");
+    child.addChild("submodule", "submodule_tech");
 
     // When
     HierarchyPath path = domainStructure.pathFor(

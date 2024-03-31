@@ -24,11 +24,12 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("org.p3model:p3-model-annotations:0.1-SNAPSHOT")
     implementation("com.scalified:tree:0.2.5")
+    implementation("org.slf4j:slf4j-api:2.0.10")
+    implementation("ch.qos.logback:logback-classic:1.4.14")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.assertj:assertj-core:3.24.2")
     testImplementation("io.hosuaby:inject-resources-junit-jupiter:0.3.2")
-    testImplementation("ch.qos.logback:logback-classic:1.4.14")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
 

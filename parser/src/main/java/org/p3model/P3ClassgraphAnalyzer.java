@@ -11,6 +11,7 @@ import io.github.classgraph.ScanResult;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+import org.p3model.HierarchyStructure.HierarchyNode;
 import org.p3model.P3Model.P3Element;
 import org.p3model.P3Model.P3ElementType;
 import org.p3model.P3Model.P3Relation;
@@ -18,11 +19,14 @@ import org.p3model.P3Model.P3RelationType;
 import org.p3model.annotations.ModelElement;
 import org.p3model.annotations.SystemDefinition;
 import org.p3model.annotations.domain.staticModel.DomainModule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class P3ClassgraphAnalyzer implements P3ModelAnalyzer {
 
   private final String packageName;
   private final SystemNameExtractor systemNameExtractor = new SystemNameExtractor();
+  private final DomainHierarchyExtractor domainHierarchyExtractor = new DomainHierarchyExtractor();
   private final ElementExtractor elementExtractor = new ElementExtractor();
 
   // maybe for simpler test setup (in case of multiple implementations), package should be removed
@@ -36,11 +40,11 @@ public class P3ClassgraphAnalyzer implements P3ModelAnalyzer {
 
     return scanner(scanResult -> {
 
-      ModelBuilder builder = new ModelBuilder(systemNameExtractor.extractSystemName(systemName, scanResult),
-          new HierarchyStructure());
+      ModelBuilder builder = new ModelBuilder(
+          systemNameExtractor.extract(systemName, scanResult),
+          domainHierarchyExtractor.extract(scanResult));
 
       elementExtractor.extractElements(scanResult, builder);
-
       return builder.build();
     });
   }
@@ -54,6 +58,7 @@ public class P3ClassgraphAnalyzer implements P3ModelAnalyzer {
   }
 
   static class ModelBuilder {
+
     private final String systemName;
     private final List<P3Element> elements = new ArrayList<>();
     private final HierarchyStructure hierarchyStructure;
@@ -71,8 +76,9 @@ public class P3ClassgraphAnalyzer implements P3ModelAnalyzer {
       elements.add(element);
     }
 
-    public void addBB(String name, P3ElementType p3ElementType, HierarchyStructure.HierarchyPath namespace) {
-      elements.add(new P3Element(hierarchyStructure.pathFor(namespace),p3ElementType, name));
+    public void addBB(String name, P3ElementType p3ElementType,
+        HierarchyStructure.HierarchyPath namespace) {
+      elements.add(new P3Element(hierarchyStructure.pathFor(namespace), p3ElementType, name));
     }
   }
 
@@ -98,7 +104,7 @@ public class P3ClassgraphAnalyzer implements P3ModelAnalyzer {
 
   static class SystemNameExtractor {
 
-    String extractSystemName(String externalName, ScanResultWrapper scanResult) {
+    String extract(String externalName, ScanResultWrapper scanResult) {
 
       if (!externalName.isBlank()) {
         return externalName;
@@ -122,6 +128,7 @@ public class P3ClassgraphAnalyzer implements P3ModelAnalyzer {
       return new ClassGraph()
           .enableAllInfo()
           .enableInterClassDependencies()
+          .disableJarScanning()
           .acceptPackages(packageName);
     }
   }
@@ -130,10 +137,8 @@ public class P3ClassgraphAnalyzer implements P3ModelAnalyzer {
 
     void extractElements(ScanResultWrapper wrapper, ModelBuilder builder) {
 
-
       PackageInfoList domainModulePackages = wrapper.getPackageInfoAnnotatedWith(
           DomainModule.class);
-
 
       for (final PackageInfo pkg : domainModulePackages) {
 
@@ -173,6 +178,61 @@ public class P3ClassgraphAnalyzer implements P3ModelAnalyzer {
 
       return relations;
 
+    }
+  }
+
+  static class DomainHierarchyExtractor {
+    Logger logger = LoggerFactory.getLogger(DomainHierarchyExtractor.class);
+
+    HierarchyStructure extract(ScanResultWrapper scanResult) {
+      PackageInfoList infoList = scanResult.scanResult.getPackageInfo();
+      HierarchyStructure domainStructure = new HierarchyStructure();
+
+      if (!infoList.isEmpty()) {
+        if(logger.isTraceEnabled()) {
+          infoList.forEach(packageInfo -> logger.atTrace().log(packageInfo.toString()));
+        }
+        PackageInfo packageInfo = infoList.get(0);
+        logger.atTrace().log(packageInfo.toString());
+
+        HierarchyNode node = domainStructure.getRoot();
+        PackageInfo rootPackage = getRootPackage(packageInfo);
+
+        extract(rootPackage, node);
+      }
+      return domainStructure;
+    }
+
+    private void extract(PackageInfo packageInfo, HierarchyNode node) {
+      if (packageInfo.hasAnnotation(DomainModule.class)) {
+        node = node.addChild(
+            packageInfo.getAnnotationInfo(DomainModule.class).getParameterValues()
+                .getValue("name").toString(), extractLastElement(packageInfo.getName()));
+      }
+      PackageInfoList children = packageInfo.getChildren();
+      for (PackageInfo child : children) {
+        extract(child, node);
+      }
+    }
+
+    private  String extractLastElement(String name) {
+      String[] tokens = name.split("\\.");
+      return tokens[tokens.length -1];
+    }
+
+    private PackageInfo getRootPackage(PackageInfo packageInfo) {
+      if (packageInfo == null) {
+        throw new IllegalArgumentException();
+      }
+      PackageInfo current = packageInfo;
+      PackageInfo previous = packageInfo;
+
+      while (current != null) {
+        System.out.println("get: " + current);
+        previous = current;
+        current = current.getParent();
+      }
+      return previous;
     }
   }
 }
