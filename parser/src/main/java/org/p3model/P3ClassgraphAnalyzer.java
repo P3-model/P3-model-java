@@ -14,8 +14,6 @@ import java.util.function.Function;
 import org.p3model.HierarchyStructure.HierarchyNode;
 import org.p3model.P3Model.P3Element;
 import org.p3model.P3Model.P3ElementType;
-import org.p3model.P3Model.P3Relation;
-import org.p3model.P3Model.P3RelationType;
 import org.p3model.annotations.ModelElement;
 import org.p3model.annotations.SystemDefinition;
 import org.p3model.annotations.domain.staticModel.DomainModule;
@@ -160,27 +158,6 @@ public class P3ClassgraphAnalyzer implements P3ModelAnalyzer {
     }
   }
 
-  static class RelationExtractor {
-
-    List<P3Relation> extractRelations(ScanResultWrapper wrapper) {
-
-      ClassInfoList elementClasses = wrapper.getElementClasses();
-      List<P3Relation> relations = new ArrayList<>();
-
-      for (final ClassInfo ci : elementClasses) {
-        for (final ClassInfo dep : ci.getClassDependencies()) {
-          if (elementClasses.contains(dep)) {
-            relations.add(new P3Relation(P3RelationType.DependsOn, "basic." + ci.getSimpleName(),
-                "basic." + dep.getSimpleName()));
-          }
-        }
-      }
-
-      return relations;
-
-    }
-  }
-
   static class DomainHierarchyExtractor {
     Logger logger = LoggerFactory.getLogger(DomainHierarchyExtractor.class);
 
@@ -228,7 +205,6 @@ public class P3ClassgraphAnalyzer implements P3ModelAnalyzer {
       PackageInfo previous = packageInfo;
 
       while (current != null) {
-        System.out.println("get: " + current);
         previous = current;
         current = current.getParent();
       }
