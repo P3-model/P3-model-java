@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 class HierarchyStructure {
 
@@ -144,7 +145,9 @@ class HierarchyStructure {
 
     HierarchyPath(String value) {
       // validate with regexp
-      this.parts = Arrays.asList(value.split("\\."));
+      this.parts = Arrays.stream(value.split("\\."))
+          .filter(s -> !s.isEmpty())
+          .collect(Collectors.toList());
     }
 
     HierarchyPath(List<String> pathParts) {
@@ -181,6 +184,10 @@ class HierarchyStructure {
     @Override
     public int hashCode() {
       return parts.hashCode();
+    }
+
+    public boolean isEmpty() {
+      return parts.isEmpty();
     }
   }
 }

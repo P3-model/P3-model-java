@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.p3model.P3ClassgraphAnalyzer.ElementExtractor;
 import org.p3model.P3ClassgraphAnalyzer.ModelBuilder;
@@ -17,7 +16,7 @@ class ElementExtractorTest {
   ScanResultWrapper wrapper = ScanWrapperFactory.create("org.p3model.samples.basic");
 
   @Test
-  @Disabled("not implemented")
+  //@Disabled("not implemented")
   void should_extract_elements_for_types() {
 
     List<P3Element> expectedElements = new ArrayList<>();
@@ -28,7 +27,7 @@ class ElementExtractorTest {
 
     ElementExtractor extractor = new ElementExtractor();
 
-    ModelBuilder builder = new ModelBuilder("basic", DomainHierarchyFactory.empty());
+    ModelBuilder builder = new ModelBuilder("basic", DomainHierarchyFactory.oneLevel("basic"));
     extractor.extractElements(wrapper, builder);
 
     assertThat(builder.build().getElements()).containsAll(expectedElements);

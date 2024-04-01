@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import org.p3model.HierarchyStructure.HierarchyNode;
+import org.p3model.HierarchyStructure.HierarchyPath;
 import org.p3model.P3Model.P3Element;
 import org.p3model.P3Model.P3ElementType;
 import org.p3model.annotations.ModelElement;
@@ -70,8 +71,10 @@ public class P3ClassgraphAnalyzer implements P3ModelAnalyzer {
       return new P3Model(systemName, elements);
     }
 
-    public void add(P3Element element) {
-      elements.add(element);
+    public void add(ClassInfo info, P3ElementType type, String name) {
+      HierarchyPath path = hierarchyStructure.pathFor(new HierarchyPath(info.getPackageName()));
+      P3Element p3Element = new P3Element(path, type, name);
+      elements.add(p3Element);
     }
 
     public void addBB(String name, P3ElementType p3ElementType,
@@ -89,8 +92,9 @@ public class P3ClassgraphAnalyzer implements P3ModelAnalyzer {
     }
 
     ClassInfoList getElementClasses() {
-      return scanResult.getClassesWithAnnotation(ModelElement.class)
-          .filter(classInfo -> !classInfo.isAnnotation());
+      return scanResult.getAllClasses()
+          .filter(classInfo -> classInfo.getAnnotations()
+              .stream().anyMatch(annotation -> annotation.hasAnnotation(ModelElement.class)));
 
     }
 
@@ -126,29 +130,21 @@ public class P3ClassgraphAnalyzer implements P3ModelAnalyzer {
       return new ClassGraph()
           .enableAllInfo()
           .enableInterClassDependencies()
-          .disableJarScanning()
-          .acceptPackages(packageName);
+          //.disableJarScanning()
+          .acceptPackages(packageName)
+          .acceptJars("p3-model-annotations*");
     }
   }
 
   static class ElementExtractor {
-
+    Logger logger = LoggerFactory.getLogger(ElementExtractor.class);
     void extractElements(ScanResultWrapper wrapper, ModelBuilder builder) {
-
-      PackageInfoList domainModulePackages = wrapper.getPackageInfoAnnotatedWith(
-          DomainModule.class);
-
-      for (final PackageInfo pkg : domainModulePackages) {
-
-        builder.add(new P3Element("", P3ElementType.DomainModule, pkg.getAnnotationInfo(
-            DomainModule.class.getName()).getParameterValues().getValue("name").toString()));
-      }
 
       ClassInfoList elementClasses = wrapper.getElementClasses();
       for (ClassInfo elementClass : elementClasses) {
+        logger.atInfo().log(elementClass.getName());
         elementClass.getPackageName();
-        builder.add(
-            new P3Element("basic", getP3ElementType(elementClass), elementClass.getSimpleName()));
+        builder.add(elementClass, getP3ElementType(elementClass), elementClass.getSimpleName());
       }
     }
 
@@ -169,7 +165,7 @@ public class P3ClassgraphAnalyzer implements P3ModelAnalyzer {
         if(logger.isTraceEnabled()) {
           infoList.forEach(packageInfo -> logger.atTrace().log(packageInfo.toString()));
         }
-        PackageInfo packageInfo = infoList.get(0);
+        PackageInfo packageInfo = infoList.filter(pi -> !pi.getClassInfoRecursive().get(0).isExternalClass()).get(0);
         logger.atTrace().log(packageInfo.toString());
 
         HierarchyNode node = domainStructure.getRoot();

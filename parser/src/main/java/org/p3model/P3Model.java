@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class P3Model {
 
@@ -17,23 +19,6 @@ public class P3Model {
     this.relations = new ArrayList<>();
   }
 
-  public void addElement(P3ElementType p3ElementType, String name, String path) {
-    elements.add(new P3Element(path, p3ElementType, name));
-  }
-
-  public P3Model addElements(List<P3Element> elements) {
-    this.elements.addAll(elements);
-    return this;
-  }
-
-  public void addRelations(List<P3Relation> relations) {
-    this.relations.addAll(relations);
-  }
-
-  public String getSystemName() {
-    return system;
-  }
-
   public List<P3Element> getElements() {
     return elements;
   }
@@ -42,6 +27,23 @@ public class P3Model {
     return relations;
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    P3Model p3Model = (P3Model) o;
+    return Objects.equals(system, p3Model.system) && Objects.equals(elements,
+        p3Model.elements) && Objects.equals(relations, p3Model.relations);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(system, elements, relations);
+  }
 
   public static class P3Relation {
 
@@ -93,7 +95,7 @@ public class P3Model {
   }
 
   public static class P3Element {
-
+    static final Logger logger = LoggerFactory.getLogger(P3Element.class);
     private final String id;
     private final P3ElementType type;
     private final String name;
@@ -104,8 +106,9 @@ public class P3Model {
     }
 
     P3Element(HierarchyStructure.HierarchyPath path, P3ElementType type, String name) {
-
-      this.id = type.name() + "|" + path + name;
+      logger.atInfo().log(path.toString());
+      logger.atInfo().log(String.valueOf(path.isEmpty()));
+      this.id = type.name() + "|" + (path.isEmpty() ? name : path + "."+ name);
       this.type = type;
       this.name = name;
     }
