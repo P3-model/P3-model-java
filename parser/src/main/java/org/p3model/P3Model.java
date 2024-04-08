@@ -1,9 +1,10 @@
 package org.p3model;
 
-import java.util.ArrayList;
+import io.github.classgraph.ClassInfo;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
+import org.p3model.HierarchyStructure.HierarchyPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,10 +14,10 @@ public class P3Model {
   private final List<P3Element> elements;
   private final List<P3Relation> relations;
 
-  public P3Model(String system, List<P3Element> elements) {
+  public P3Model(String system, List<P3Element> elements, List<P3Relation> relations) {
     this.system = system;
     this.elements = elements;
-    this.relations = new ArrayList<>();
+    this.relations = relations;
   }
 
   public List<P3Element> getElements() {
@@ -91,7 +92,7 @@ public class P3Model {
   }
 
   public enum P3RelationType {
-    DependsOn, IsImplementedBy
+    DependsOn, IsImplementedBy, Contains
   }
 
   public static class P3Element {
@@ -99,18 +100,21 @@ public class P3Model {
     private final String id;
     private final P3ElementType type;
     private final String name;
+    // This should be some neutral thing, not library specific
+    private ClassInfo classInfo;
 
 
-    P3Element(String id, P3ElementType type, String name) {
-      this(new HierarchyStructure.HierarchyPath(id), type,name);
+    P3Element(String path, P3ElementType type, String name) {
+      this(new HierarchyStructure.HierarchyPath(path), type,name, null);
     }
 
-    P3Element(HierarchyStructure.HierarchyPath path, P3ElementType type, String name) {
+    P3Element(HierarchyPath path, P3ElementType type, String name, ClassInfo info) {
       logger.atInfo().log(path.toString());
       logger.atInfo().log(String.valueOf(path.isEmpty()));
       this.id = type.name() + "|" + (path.isEmpty() ? name : path + "."+ name);
       this.type = type;
       this.name = name;
+      this.classInfo = info;
     }
 
     @Override
@@ -140,5 +144,16 @@ public class P3Model {
           .toString();
     }
 
+    public ClassInfo getInfo() {
+      return classInfo;
+    }
+
+    public String id() {
+      return id;
+    }
+
+    public boolean hasInfo(ClassInfo info) {
+      return this.classInfo.equals(info);
+    }
   }
 }
