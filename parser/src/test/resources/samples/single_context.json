@@ -1,0 +1,81 @@
+{
+  "System": {
+    "Name": "SingleContext",
+    "GenerationTimestamp": ""
+  },
+  "Elements": [
+    {
+      "Type": "DddBoundedContext",
+      "Id": "DddBoundedContext|single",
+      "Name": "single"
+    },
+    {
+      "Type": "DddRepository",
+      "Id": "DddRepository|single.SampleRepo",
+      "Name": "SampleRepo"
+    },
+    {
+      "Type": "DDDValueObject",
+      "Id": "DDDValueObject|single.SomeValue",
+      "Name": "SomeValue",
+      "AdditionalAttributes": {
+        "type": "domainSpecific"
+      }
+    },
+    {
+      "Type": "DddApplicationService",
+      "Id": "DddApplicationService|single.SampleService",
+      "Name": "SampleService"
+    },
+    {
+      "Type": "DddAggregate",
+      "Id": "DddAggregate|single.Sample",
+      "Name": "Sample"
+    }
+  ],
+  "Relations": [
+    {
+      "Type": "Contains",
+      "Source": "DddBoundedContext|single",
+      "Destination": "DddAggregate|single.Sample"
+    },
+    {
+      "Type": "Contains",
+      "Source": "DddBoundedContext|single",
+      "Destination": "DddRepository|single.SampleRepo"
+    },
+    {
+      "Type": "Contains",
+      "Source": "DddBoundedContext|single",
+      "Destination": "DddApplicationService|single.SampleService"
+    },
+    {
+      "Type": "Contains",
+      "Source": "DddBoundedContext|single",
+      "Destination": "DDDValueObject|single.SomeValue"
+    },
+    {
+      "Type": "DependsOn",
+      "Source": "DddRepository|single.SampleRepo",
+      "Destination": "DddAggregate|single.Sample",
+      "AdditionalAttributes": {
+        "description": "is persisted by"
+      }
+    },
+    {
+      "Type": "DependsOn",
+      "Source": "DddAggregate|single.Sample",
+      "Destination": "DDDValueObject|single.SomeValue"
+    },
+    {
+      "Type": "DependsOn",
+      "Source": "DddApplicationService|single.SampleService",
+      "Destination": "DddAggregate|single.Sample"
+    },
+    {
+      "Type": "DependsOn",
+      "Source": "DddApplicationService|single.SampleService",
+      "Destination": "DddRepository|single.SampleRepo"
+    }
+  ]
+}
