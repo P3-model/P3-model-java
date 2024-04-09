@@ -12,31 +12,27 @@ import org.p3model.P3Model.P3RelationType;
 
 class P3ModelAnalyzerTest {
 
-
   @Test
-  //@Disabled("nested module parsing is being implemented")
   void should_extract_relations_between_types() {
+    // Given
     P3ModelAnalyzer extractor = new P3ClassgraphAnalyzer("org.p3model.samples.basic");
-
-    P3Model model = extractor.extract("basic");
-
     List<P3Relation> expectedRelations = new ArrayList<>();
     expectedRelations.add(new P3Relation(P3RelationType.DependsOn, "DddRepository|basic.SampleRepo", "DddAggregate|basic.Sample"));
     expectedRelations.add(new P3Relation(P3RelationType.DependsOn, "DddAggregate|basic.Sample", "DddValueObject|basic.SomeValue"));
     expectedRelations.add(new P3Relation(P3RelationType.DependsOn, "DddValueObject|basic.SomeValue", "DddAggregate|basic.Sample"));
     expectedRelations.add(new P3Relation(P3RelationType.DependsOn, "DddApplicationService|basic.SampleService", "DddRepository|basic.SampleRepo"));
     expectedRelations.add(new P3Relation(P3RelationType.DependsOn, "DddApplicationService|basic.SampleService", "DddAggregate|basic.Sample"));
+    // When
+    P3Model model = extractor.extract("basic");
 
+    // Then
     assertThat(model.getRelations()).containsExactlyInAnyOrderElementsOf(expectedRelations);
   }
 
   @Test
-  //@Disabled("nested module parsing is being implemented")
   void should_generate_element_id_for_nested_modules() {
+    // Given
     P3ModelAnalyzer extractor = new P3ClassgraphAnalyzer("org.p3model.samples.nestedModule");
-
-    P3Model model = extractor.extract("nested");
-
     List<P3Element> expectedElements = new ArrayList<>();
     expectedElements.add(new P3Element("nested", P3ElementType.DddEntity,"Element0"));
     expectedElements.add(new P3Element("nested.level1A", P3ElementType.DddEntity,"Element1A"));
@@ -46,8 +42,10 @@ class P3ModelAnalyzerTest {
     expectedElements.add(new P3Element("nested.level1B", P3ElementType.DddEntity,"SubElement1"));
     expectedElements.add(new P3Element("nested.level1B", P3ElementType.DddEntity,"SubElement2"));
 
+    // When
+    P3Model model = extractor.extract("nested");
 
-    assertThat(model.getElements()).containsAll(expectedElements);
-
+    // Then
+    assertThat(model.getElements()).containsExactlyInAnyOrderElementsOf(expectedElements);
   }
 }
