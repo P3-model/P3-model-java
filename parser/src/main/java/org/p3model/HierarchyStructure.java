@@ -145,7 +145,7 @@ class HierarchyStructure {
     public String path() {
       HierarchyNode next = parent;
       StringBuilder path = new StringBuilder();
-      while (next != null && !Objects.equals(next.name, SYSTEM)) {
+      while (next != null && !next.name.equals(SYSTEM)) {
         if (path.length() == 0) {
           path.insert(0, next.name);
         } else {
