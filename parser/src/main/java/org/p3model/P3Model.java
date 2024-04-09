@@ -87,12 +87,20 @@ public class P3Model {
   }
 
   public enum P3ElementType {
-    DddRepository, DddAggregate, DddEntity, DddValueObject, DddApplicationService, ProcessStep, DomainModule
+    DddRepository, DddAggregate, DddEntity, DddValueObject, DddApplicationService, ProcessStep, DomainModule;
+
+    public P3Element from(String path, String name) {
+      return new P3Element(path, this, name);
+    }
 
   }
 
   public enum P3RelationType {
-    DependsOn, IsImplementedBy, Contains
+    DependsOn,IsImplementedBy, Contains;
+
+    public P3Relation ids(String source, String destination) {
+      return new P3Relation(this,source,destination);
+    }
   }
 
   public static class P3Element {

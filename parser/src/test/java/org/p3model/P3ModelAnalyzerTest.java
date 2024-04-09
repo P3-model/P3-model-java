@@ -1,14 +1,14 @@
 package org.p3model;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.p3model.P3Model.P3ElementType.DddEntity;
+import static org.p3model.P3Model.P3RelationType.DependsOn;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.p3model.P3Model.P3Element;
-import org.p3model.P3Model.P3ElementType;
 import org.p3model.P3Model.P3Relation;
-import org.p3model.P3Model.P3RelationType;
 
 class P3ModelAnalyzerTest {
 
@@ -16,12 +16,15 @@ class P3ModelAnalyzerTest {
   void should_extract_relations_between_types() {
     // Given
     P3ModelAnalyzer extractor = new P3ClassgraphAnalyzer("org.p3model.samples.basic");
-    List<P3Relation> expectedRelations = new ArrayList<>();
-    expectedRelations.add(new P3Relation(P3RelationType.DependsOn, "DddRepository|basic.SampleRepo", "DddAggregate|basic.Sample"));
-    expectedRelations.add(new P3Relation(P3RelationType.DependsOn, "DddAggregate|basic.Sample", "DddValueObject|basic.SomeValue"));
-    expectedRelations.add(new P3Relation(P3RelationType.DependsOn, "DddValueObject|basic.SomeValue", "DddAggregate|basic.Sample"));
-    expectedRelations.add(new P3Relation(P3RelationType.DependsOn, "DddApplicationService|basic.SampleService", "DddRepository|basic.SampleRepo"));
-    expectedRelations.add(new P3Relation(P3RelationType.DependsOn, "DddApplicationService|basic.SampleService", "DddAggregate|basic.Sample"));
+
+    List<P3Relation> expectedRelations = Arrays.asList(
+        DependsOn.ids("DddRepository|basic.SampleRepo", "DddAggregate|basic.Sample"),
+        DependsOn.ids("DddAggregate|basic.Sample", "DddValueObject|basic.SomeValue"),
+        DependsOn.ids("DddValueObject|basic.SomeValue", "DddAggregate|basic.Sample"),
+        DependsOn.ids("DddApplicationService|basic.SampleService",
+            "DddRepository|basic.SampleRepo"),
+        DependsOn.ids("DddApplicationService|basic.SampleService", "DddAggregate|basic.Sample")
+    );
     // When
     P3Model model = extractor.extract("basic");
 
@@ -33,14 +36,16 @@ class P3ModelAnalyzerTest {
   void should_generate_element_id_for_nested_modules() {
     // Given
     P3ModelAnalyzer extractor = new P3ClassgraphAnalyzer("org.p3model.samples.nestedModule");
-    List<P3Element> expectedElements = new ArrayList<>();
-    expectedElements.add(new P3Element("nested", P3ElementType.DddEntity,"Element0"));
-    expectedElements.add(new P3Element("nested.level1A", P3ElementType.DddEntity,"Element1A"));
-    expectedElements.add(new P3Element("nested.level1B", P3ElementType.DddEntity,"Element1B"));
-    expectedElements.add(new P3Element("nested.level1A.level2A", P3ElementType.DddEntity,"Element2A"));
-    expectedElements.add(new P3Element("nested.level1A.level2B", P3ElementType.DddEntity,"Element2B"));
-    expectedElements.add(new P3Element("nested.level1B", P3ElementType.DddEntity,"SubElement1"));
-    expectedElements.add(new P3Element("nested.level1B", P3ElementType.DddEntity,"SubElement2"));
+
+    List<P3Element> expectedElements = Arrays.asList(
+        DddEntity.from("nested", "Element0"),
+        DddEntity.from("nested.level1A", "Element1A"),
+        DddEntity.from("nested.level1B", "Element1B"),
+        DddEntity.from("nested.level1A.level2A", "Element2A"),
+        DddEntity.from("nested.level1A.level2B", "Element2B"),
+        DddEntity.from("nested.level1B", "SubElement1"),
+        DddEntity.from("nested.level1B", "SubElement2")
+    );
 
     // When
     P3Model model = extractor.extract("nested");
