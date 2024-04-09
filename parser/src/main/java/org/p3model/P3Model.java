@@ -161,7 +161,7 @@ public class P3Model {
     }
 
     public boolean hasInfo(ClassInfo info) {
-      return this.classInfo.equals(info);
+      return this.classInfo != null && this.classInfo.equals(info);
     }
   }
 }

@@ -2,6 +2,7 @@ package org.p3model;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.p3model.P3Model.P3ElementType.DddEntity;
+import static org.p3model.P3Model.P3ElementType.DomainModule;
 import static org.p3model.P3Model.P3RelationType.DependsOn;
 
 import java.util.Arrays;
@@ -44,7 +45,8 @@ class P3ModelAnalyzerTest {
         DddEntity.from("nested.level1A.level2A", "Element2A"),
         DddEntity.from("nested.level1A.level2B", "Element2B"),
         DddEntity.from("nested.level1B", "SubElement1"),
-        DddEntity.from("nested.level1B", "SubElement2")
+        DddEntity.from("nested.level1B", "SubElement2"),
+        DomainModule.from("","nested")
     );
 
     // When

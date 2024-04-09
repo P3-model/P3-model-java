@@ -72,11 +72,17 @@ public class P3ClassgraphAnalyzer implements P3ModelAnalyzer {
     }
 
     P3Model build() {
+      hierarchyStructure.visit(hierarchyNode -> {
+        if (!hierarchyNode.isSystem()) {
+          elements.add(
+              new P3Element(hierarchyNode.path(), P3ElementType.DomainModule,
+                  hierarchyNode.name()));
+        }
+      });
 
-      for (RelationResolver resolver : resolvers) {
-        relations.addAll(resolver.resolve(
-            (info, domain) -> elements.stream().filter(element -> element.hasInfo(info)).findFirst().orElse(null)));
-      }
+      resolvers.forEach(relationResolver -> relations.addAll(relationResolver.resolve(
+          (info, domain) -> elements.stream().filter(element -> element.hasInfo(info)).findFirst()
+              .orElse(null))));
       return new P3Model(systemName, elements, relations);
     }
 
@@ -90,7 +96,8 @@ public class P3ClassgraphAnalyzer implements P3ModelAnalyzer {
         for (ClassInfo classDependency : classDependencies) {
           P3Element targetElement = locator.find(classDependency, P3Perspective.Domain);
           if (targetElement != null) {
-            locatedRelations.add(new P3Relation(P3RelationType.DependsOn, p3Element.id(), targetElement.id()));
+            locatedRelations.add(
+                new P3Relation(P3RelationType.DependsOn, p3Element.id(), targetElement.id()));
           }
         }
         return locatedRelations;

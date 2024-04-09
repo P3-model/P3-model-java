@@ -16,7 +16,7 @@ class HierarchyStructure {
   private final HierarchyNode treeRoot;
 
   public HierarchyStructure() {
-    treeRoot = new HierarchyNode(SYSTEM, SYSTEM);
+    treeRoot = new HierarchyNode(SYSTEM, SYSTEM, null);
   }
 
   HierarchyPath pathFor(HierarchyPath namespace) {
@@ -51,27 +51,33 @@ class HierarchyStructure {
     return Objects.hash(treeRoot);
   }
 
+  public void visit(HierarchyVisitor visitor) {
+    treeRoot.visit(visitor);
+  }
+
   static class HierarchyNode {
 
     private final String name;
     private final String sourceElementName;
     private final Set<HierarchyNode> children;
+    private final HierarchyNode parent;
 
     HierarchyNode addChild(String name, String sourceElementName) {
-      HierarchyNode node = new HierarchyNode(name, sourceElementName);
+      HierarchyNode node = new HierarchyNode(name, sourceElementName, this);
       children.add(node);
       return node;
     }
 
     HierarchyNode addChild(String name) {
-      HierarchyNode node = new HierarchyNode(name, name);
+      HierarchyNode node = new HierarchyNode(name, name, this);
       children.add(node);
       return node;
     }
 
-    private HierarchyNode(String name, String sourceElementName) {
+    private HierarchyNode(String name, String sourceElementName, HierarchyNode parent) {
       this.name = name;
       this.sourceElementName = sourceElementName;
+      this.parent = parent;
       this.children = new HashSet<>();
     }
 
@@ -129,6 +135,33 @@ class HierarchyStructure {
     @Override
     public int hashCode() {
       return Objects.hash(name, sourceElementName, children);
+    }
+
+    public void visit(HierarchyVisitor visitor) {
+      visitor.apply(this);
+      children.forEach(visitor::apply);
+    }
+
+    public String path() {
+      HierarchyNode next = parent;
+      StringBuilder path = new StringBuilder();
+      while (next != null && !Objects.equals(next.name, SYSTEM)) {
+        if (path.length() == 0) {
+          path.insert(0, next.name);
+        } else {
+          path.insert(0, next.name + ".");
+        }
+        next = next.parent;
+      }
+      return path.toString();
+    }
+
+    public String name() {
+      return name;
+    }
+
+    public boolean isSystem() {
+      return this.name.equals(SYSTEM);
     }
   }
 
