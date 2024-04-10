@@ -139,7 +139,7 @@ class HierarchyStructure {
 
     public void visit(HierarchyVisitor visitor) {
       visitor.apply(this);
-      children.forEach(visitor::apply);
+      children.forEach(child -> child.visit(visitor));
     }
 
     public String path() {

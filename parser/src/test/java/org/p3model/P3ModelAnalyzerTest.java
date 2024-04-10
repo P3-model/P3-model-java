@@ -46,7 +46,11 @@ class P3ModelAnalyzerTest {
         DddEntity.from("nested.level1A.level2B", "Element2B"),
         DddEntity.from("nested.level1B", "SubElement1"),
         DddEntity.from("nested.level1B", "SubElement2"),
-        DomainModule.from("","nested")
+        DomainModule.from("","nested"),
+        DomainModule.from("nested","level1B"),
+        DomainModule.from("nested","level1A"),
+        DomainModule.from("nested.level1A","level2A"),
+        DomainModule.from("nested.level1A","level2B")
     );
 
     // When
